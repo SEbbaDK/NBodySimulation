@@ -4,7 +4,7 @@ using System.Collections;
 public class Simulator : MonoBehaviour
 {
 	//TEMP: For now the program will just initialize with a fixed amount of Bodies
-	const int BodyAmount = 100;
+	const int BodyAmount = 500;
 
 	const int SimulationRadius = 20;
 
@@ -25,13 +25,14 @@ public class Simulator : MonoBehaviour
 	void CreateRandomBodies(int amount)
 	{
 		bodies = new Body[amount];
-
+		
 		for (int i = 0; i < amount; i++)
 		{
 			bodies[i] = new Body
 			(
 				Random.insideUnitCircle * SimulationRadius,
-				Vector3.zero
+				Vector3.zero,
+				10000f
 			);
 		}
 	}
@@ -39,12 +40,23 @@ public class Simulator : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		Simulate();
+		SimulateCPU();
 		particleController.UpdateParticles(bodies);
 	}
 
-	void Simulate()
+	void SimulateCPU()
 	{
-		
+		foreach (Body thisBody in bodies)
+		{
+			foreach (Body thatBody in bodies)
+			{
+				if(thisBody != thatBody)
+				{
+					thisBody.AffectBy(thatBody, Time.deltaTime);
+				}
+			}
+
+			thisBody.Position += thisBody.Velocity * Time.deltaTime;
+		}
 	}
 }

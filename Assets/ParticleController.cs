@@ -17,8 +17,16 @@ public class ParticleController : MonoBehaviour
 		particles = new ParticleSystem.Particle[particleCount];
 		for (int i = 0; i < particles.Length; i++)
 		{
-			particles[i] = new ParticleSystem.Particle();
+			particles[i] = new ParticleSystem.Particle
+			{
+				startSize = 1f,
+				lifetime = 100f,
+				startLifetime = 100f,
+				startColor = Color.white,
+			};
 		}
+
+		particleSystem.SetParticles( particles, particles.Length);
 	}
 
 	public void UpdateParticles(Body[] bodies)
@@ -27,5 +35,8 @@ public class ParticleController : MonoBehaviour
 		{
 			particles[i].position = bodies[i].Position;
 		}
+
+		particleSystem.Clear();
+		particleSystem.SetParticles( particles, particles.Length );
 	}
 }

@@ -9,7 +9,7 @@ using Debug = UnityEngine.Debug;
 public class Simulator : MonoBehaviour
 {
 	//TEMP: For now the program will just initialize with a fixed amount of Bodies
-	const int BodyAmount = 2;
+	const int BodyAmount = 10;
 
 	const float SimulationRadius = 20f;
 
@@ -74,23 +74,10 @@ public class Simulator : MonoBehaviour
 		masses = new float[amount];
 
 		for(int i = 0; i < amount; i++)
-		{
-			if (is3D)
-			{
-				Vector3 randomPosition = Random.insideUnitSphere * SimulationRadius;
-				positions[(i * dimensions)] = randomPosition.x;
-				positions[(i * dimensions) + 1] = randomPosition.y;
-				positions[(i * dimensions) + 2] = randomPosition.z;
-			}
-			else
-			{
-				Vector2 randomPosition = Random.insideUnitCircle;
-				positions[( i * dimensions )] = randomPosition.x;
-				positions[( i * dimensions ) + 1] = randomPosition.y;
-			}
-
 			masses[i] = 10000f;
-		}
+
+		for (int i = 0; i < positions.Length; i++)
+			positions[i] = Random.Range(-SimulationRadius, SimulationRadius);
 	}
 	
 	// Update is called once per frame

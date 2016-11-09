@@ -80,27 +80,31 @@ public class Simulator : MonoBehaviour
 
 		//Load Kernel
 		string clSource = File.ReadAllText( Application.dataPath + "/kernel.cl" );
+		Debug.Log(clSource);
 
 		//Create program from source
 		ComputeProgram program = new ComputeProgram( context, clSource );
 
 		//Compile source
 		program.Build( null, null, null, IntPtr.Zero );
-
+		
 		//Load kernel
-		ComputeKernel kernel = program.CreateKernel( "helloWorld" );
-
+		ComputeKernel kernel = program.CreateKernel( "makeTheNumberDoubleTheValue" );
+		
 		//TEMP
-		// create a ten integer array and its length
-		int[] message = { 1, 2, 3, 4, 5 };
-		int messageSize = message.Length;
+		float[] vector = { 1f, 2f, 3f };
+		//// create a ten integer array and its length
+		//int[] message = { 1, 2, 3, 4, 5 };
+		//int messageSize = message.Length;
 
-		// allocate a memory buffer with the message (the int array)
-		ComputeBuffer<int> messageBuffer = new ComputeBuffer<int>(context,
-			ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.UseHostPointer, message);
+		ComputeBuffer<float> vectorBuffer = new ComputeBuffer<float>(context, ComputeMemoryFlags.UseHostPointer | ComputeMemoryFlags.ReadWrite, vector);
+		//// allocate a memory buffer with the message (the int array)
+		//ComputeBuffer<int> messageBuffer = new ComputeBuffer<int>(context, ComputeMemoryFlags.UseHostPointer, message);
 
-		kernel.SetMemoryArgument(0, messageBuffer); // set the integer array
-		kernel.SetValueArgument(1, messageSize); // set the array size
+		//kernel.SetMemoryArgument(0, messageBuffer); // set the integer array
+		//kernel.SetValueArgument(1, messageSize); // set the array size
+
+		int doubleMe = 5;
 
 		// execute kernel
 		queue.ExecuteTask(kernel, null);

@@ -36,6 +36,18 @@ public class ParticleController : MonoBehaviour
 		}
 
 		particleSystem.Clear();
-		particleSystem.SetParticles( particles, particles.Length );
+		particleSystem.SetParticles(particles, particles.Length);
+	}
+
+	public void UpdateParticles(float[] positions, bool is3D = false)
+	{
+		for (int i = 0; i < particles.Length; i++)
+		{
+			int vectorNumber = i * (is3D ? 3 : 2);
+			particles[i].position.Set(positions[vectorNumber], positions[vectorNumber + 1], is3D ? positions[vectorNumber + 2] : 0f);
+		}
+
+		particleSystem.Clear();
+		particleSystem.SetParticles(particles, particles.Length);
 	}
 }

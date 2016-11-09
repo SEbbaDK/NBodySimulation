@@ -9,7 +9,7 @@ using Debug = UnityEngine.Debug;
 public class Simulator : MonoBehaviour
 {
 	//TEMP: For now the program will just initialize with a fixed amount of Bodies
-	const int BodyAmount = 500;
+	const int BodyAmount = 2;
 
 	const float SimulationRadius = 20f;
 
@@ -75,11 +75,19 @@ public class Simulator : MonoBehaviour
 
 		for(int i = 0; i < amount; i++)
 		{
-			Vector3 randomPosition = Random.insideUnitSphere;
-			positions[(i * dimensions)] = randomPosition.x * SimulationRadius;
-			positions[(i * dimensions) + 1] = randomPosition.y * SimulationRadius;
-			if(is3D)
-				positions[(i * dimensions) + 2] = randomPosition.z * SimulationRadius;
+			if (is3D)
+			{
+				Vector3 randomPosition = Random.insideUnitSphere * SimulationRadius;
+				positions[(i * dimensions)] = randomPosition.x;
+				positions[(i * dimensions) + 1] = randomPosition.y;
+				positions[(i * dimensions) + 2] = randomPosition.z;
+			}
+			else
+			{
+				Vector2 randomPosition = Random.insideUnitCircle;
+				positions[( i * dimensions )] = randomPosition.x;
+				positions[( i * dimensions ) + 1] = randomPosition.y;
+			}
 
 			masses[i] = 10000f;
 		}
@@ -138,9 +146,12 @@ public class Simulator : MonoBehaviour
 
 		// wait for completion
 		queue.Finish();
-
-		float[] result = new float[BodyAmount * 3];
+		
 		queue.ReadFromBuffer(velocityBuffer, ref velocities, false, null);
+
+		for (int i = 0; i < positions.Length; i++)
+			positions[i] = positions[i] + ( velocities[i] * Time.deltaTime );
+		Debug.Log( positions[0] );
 	}
 
 	void SetUpCloo()
@@ -156,7 +167,7 @@ public class Simulator : MonoBehaviour
 
 		//Load Kernel
 		string clSource = File.ReadAllText( Application.dataPath + "/kernel.cl" );
-		Debug.Log(clSource);
+		//Debug.Log(clSource);
 
 		//Create program from source
 		ComputeProgram program = new ComputeProgram( context, clSource );
